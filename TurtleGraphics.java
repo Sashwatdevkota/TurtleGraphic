@@ -263,7 +263,6 @@ public class TurtleGraphics extends LBUGraphics
                 }
                 break;
 
-
             default:
                 displayMessage("Invalid command: " + cmd);
 
