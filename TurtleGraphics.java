@@ -18,19 +18,20 @@ public class TurtleGraphics extends LBUGraphics
         MainFrame.add(this);
         MainFrame.pack();
         MainFrame.setVisible(true);
-        Scanner scan = new Scanner(System.in);
-        String input = scan.nextLine();
-        if (input.toLowerCase().equals("about")) {
-            about();
-        }
-        else{
-            System.out.println(input+" is not a valid command.");
-        }
     }
 
 
     public void processCommand(String command)
     {
-
+        command = command.toLowerCase();
+        String[] commandParts = command.split(" ");
+        String cmd = commandParts[0];
+        switch(cmd){
+            case "about":
+                about();
+                break;
+            default:
+                System.out.println("Unknown command: " + cmd);
+        }
     }
 }
