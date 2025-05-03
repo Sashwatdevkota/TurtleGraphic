@@ -1,6 +1,7 @@
 import java.awt.FlowLayout;
 import javax.swing.JFrame;
 import uk.ac.leedsbeckett.oop.LBUGraphics;
+import java.util.Scanner;
 
 public class TurtleGraphics extends LBUGraphics
 {
@@ -17,7 +18,14 @@ public class TurtleGraphics extends LBUGraphics
         MainFrame.add(this);
         MainFrame.pack();
         MainFrame.setVisible(true);
-        about();
+        Scanner scan = new Scanner(System.in);
+        String input = scan.nextLine();
+        if (input.toLowerCase().equals("about")) {
+            about();
+        }
+        else{
+            System.out.println(input+" is not a valid command.");
+        }
     }
 
 
