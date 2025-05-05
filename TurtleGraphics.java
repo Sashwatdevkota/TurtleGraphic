@@ -281,12 +281,12 @@ public class TurtleGraphics extends LBUGraphics {
                 break;
             }
 
-            case "drawword": {
+            case "displaysentence": {
                 if (commandParts.length != 2) {
                     displayMessage("Additional or Missing Parameters. Use: drawword <word>");
                 } else {
-                    LetterDrawer drawer = new LetterDrawer(this);
-                    drawer.drawLetters(commandParts[1]);
+                    SentenceDrawer drawer = new SentenceDrawer(this);
+                    drawer.drawSentence(commandParts[1]);
                 }
                 break;
             }
