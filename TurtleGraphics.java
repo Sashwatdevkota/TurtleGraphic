@@ -283,7 +283,7 @@ public class TurtleGraphics extends LBUGraphics {
 
             case "displaysentence": {
                 if (commandParts.length != 2) {
-                    displayMessage("Additional or Missing Parameters. Use: drawword <word>");
+                    displayMessage("Additional or Missing Parameters. Use: displaysentence <word>");
                 } else {
                     SentenceDrawer drawer = new SentenceDrawer(this);
                     drawer.drawSentence(commandParts[1]);
