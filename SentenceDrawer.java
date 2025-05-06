@@ -1,3 +1,6 @@
+import java.awt.Color;
+import java.util.Random;
+
 public class SentenceDrawer {
 
     private TurtleGraphics turtle;
@@ -8,13 +11,22 @@ public class SentenceDrawer {
 
     public void drawSentence(String word) {
 
+        turtle.clear();
+
         int xPosturtle = 20;
         int yPosturtle = 50;
         int lettercount = 1;
-        turtle.forward(0);
-        turtle.setTurtleSpeed(0);
 
-        if (word.length() < 138) {
+        turtle.forward(0);
+        turtle.setTurtleSpeed(1);
+
+        Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.WHITE};
+
+        if (word.length() > 138) {
+            turtle.displayMessage("Please enter a sentence that is less than 138 characters");
+        }
+        else{
+
             for (char c : word.toUpperCase().toCharArray()) {
 
                 turtle.pointTurtle(180);
@@ -22,11 +34,17 @@ public class SentenceDrawer {
                 turtle.setyPos(yPosturtle);
                 lettercount++;
                 xPosturtle += 30;
+                turtle.setTurtleSpeed(0);
+
                 if (lettercount == 27) {
                     lettercount = 1;
                     xPosturtle = 20;
                     yPosturtle += 70;
                 }
+
+                Color randomColor = colors[new Random().nextInt(colors.length)];
+                turtle.setPenColour(randomColor);
+
                 switch (c) {
                     case 'A': drawA();break;
                     case 'B': drawB();break;
@@ -57,13 +75,11 @@ public class SentenceDrawer {
                     case ' ': drawSpace();break;
                     default: turtle.displayMessage("Unsupported letter: " + c);
                 }
+                turtle.setxPos(100000);
+                turtle.setyPos(100000);
             }
-        }else{
-            turtle.displayMessage("Please enter a sentence that is less than 138 characters");
-        }
 
-        turtle.setxPos(100000);
-        turtle.setyPos(100000);
+        }
 
     }
 
@@ -73,13 +89,13 @@ public class SentenceDrawer {
         turtle.drawOff();
         turtle.forward(-50);
         turtle.drawOn();
-        turtle.left(90);
+        turtle.left();
         turtle.forward(20);
-        turtle.right(90);
+        turtle.right();
         turtle.forward(50);
         turtle.drawOff();
         turtle.forward(-25);
-        turtle.right(90);
+        turtle.right();
         turtle.drawOn();
         turtle.forward(20);
 
@@ -340,6 +356,7 @@ public class SentenceDrawer {
         turtle.drawOn();
         turtle.forward(20);
     }
+
     public void drawR() {
         turtle.forward(50);
         turtle.drawOff();
