@@ -84,7 +84,10 @@ public class TurtleGraphics extends LBUGraphics {
         defaultPenColor = getPenColour();
         defaultPenWidth = Math.round(getStroke());
         forward(0);
+
     }
+
+    /*---------------------------FILE SAVING SYSTEM------------------------------------------*/
 
     public void loadFile() {
         if (!isImageSaved) {
@@ -206,11 +209,10 @@ public class TurtleGraphics extends LBUGraphics {
         }
     }
 
-
-
-
+    /*---------------------------OBJECT DRAWING SYSTEM------------------------------------------*/
 
     @Override
+
     public void about() {
         super.about();
         displayMessage("This program was created by Sashwat Devkota.");
@@ -244,6 +246,25 @@ public class TurtleGraphics extends LBUGraphics {
 
     }
 
+    public void drawStar(int a){
+            drawOn();
+            for (int i = 0; i < 5; i++) {
+                forward(a);
+                right(144);
+            }
+        }
+
+    public void drawSpiral(int a) {
+        drawOn();
+        int step = 10;
+        for (int i = 0; i < a; i++) {
+            forward(step);
+            right(90);
+            step += 5; // controls how much the spiral expands
+        }
+    }
+
+    /*---------------------------PROCESS COMMAND------------------------------------------*/
 
     public void processCommand(String command) {
 
@@ -807,6 +828,36 @@ public class TurtleGraphics extends LBUGraphics {
                     }
                 }
                 break;
+            }
+
+            case "star": {
+                if (commandParts.length != 2) {
+                    displayMessage("Incorrect number of parameters. Use: star <length>");
+                } else {
+                    try {
+                        int parameter = Integer.parseInt(commandParts[1]);
+                        drawStar(parameter);
+                        displayMessage("Drew a star with length " + parameter);
+                    } catch (NumberFormatException e) {
+                        displayMessage("The parameter cannot be converted to an integer.");
+                    }
+                }
+                break;
+            }
+
+            case "spiral": {
+                    if (commandParts.length != 2) {
+                    displayMessage("Incorrect number of parameters. Use: spiral <length>");
+                } else {
+                    try {
+                        int parameter = Integer.parseInt(commandParts[1]);
+                        drawSpiral(parameter);
+                        displayMessage("Drew a spiral with length " + parameter);
+                    } catch (NumberFormatException e) {
+                        displayMessage("The parameter cannot be converted to an integer.");
+                    }
+                }
+                    break;
             }
 
             case "triangle": {

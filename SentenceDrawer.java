@@ -80,7 +80,8 @@ public class SentenceDrawer {
             }
 
         }
-
+        turtle.clearInterface();
+        turtle.displayMessage("Drawn sentence: "+ word );
     }
 
     public void drawA() {
