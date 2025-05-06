@@ -1,6 +1,11 @@
 import java.awt.*;
-import java.util.Arrays;
-import javax.swing.JFrame;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.util.*;
+import java.io.*;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.ac.leedsbeckett.oop.LBUGraphics;
 
 public class TurtleGraphics extends LBUGraphics {
@@ -8,23 +13,202 @@ public class TurtleGraphics extends LBUGraphics {
     private final Color defaultPenColor;
     private final int defaultPenWidth;
 
+    private JFileChooser chooser;
+    private ArrayList<String> commands;
+    private boolean isImageSaved = false;
+
     public static void main(String[] args) {
         new TurtleGraphics();
     }
 
     public TurtleGraphics() {
-
         JFrame MainFrame = new JFrame();
+        chooser = new JFileChooser();
+        commands = new ArrayList<>();
+
+        JMenuBar menuBar = new JMenuBar();
+        MainFrame.setJMenuBar(menuBar);
+
+        JMenu menuFile = new JMenu("File");
+        JMenu menuHelp = new JMenu("Help");
+        menuBar.add(menuFile);
+        menuBar.add(menuHelp);
+
+        JMenuItem menuItemSavePng = new JMenuItem("Save PNG");
+        JMenuItem menuItemSaveTxt = new JMenuItem("Save Txt");
+        JMenuItem menuItemLoad = new JMenuItem("Load");
+        JMenuItem menuItemHelp = new JMenuItem("List Commands");
+
+        menuFile.add(menuItemSavePng);
+        menuFile.add(menuItemSaveTxt);
+        menuFile.add(menuItemLoad);
+        menuHelp.add(menuItemHelp);
+
         MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        MainFrame.setLayout(new FlowLayout());
-        MainFrame.add(this);
+        MainFrame.setLayout(new BorderLayout());
+        MainFrame.add(this, BorderLayout.CENTER);
+
+        MainFrame.setSize(800, 600);
         MainFrame.pack();
         MainFrame.setVisible(true);
+
+        menuItemSavePng.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                saveFilePng();
+            }
+        });
+
+        menuItemSaveTxt.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                saveFileTxt();
+            }
+        });
+
+        menuItemLoad.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                loadFile();
+            }
+        });
+
+        menuItemHelp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                String helpText =
+                        "List of Available Commands: \n\n" +
+                         "move <distance>";
+                         JOptionPane.showMessageDialog(null, helpText, "Command List", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+
         drawOn();
         defaultPenColor = getPenColour();
         defaultPenWidth = Math.round(getStroke());
         forward(0);
     }
+
+    public void loadFile() {
+        if (!isImageSaved) {
+            int choice = JOptionPane.showConfirmDialog(
+                    null,
+                    "You have unsaved changes. Loading a file will discard them. Continue?",
+                    "Unsaved Changes",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (choice != JOptionPane.YES_OPTION) {
+                displayMessage("Load cancelled by user.");
+                return;
+            }
+        }
+
+        chooser.setDialogTitle("Load a file");
+        chooser.setFileFilter(new FileNameExtensionFilter("Text or PNG Files", "txt", "png"));
+        int result = chooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File input = chooser.getSelectedFile();
+            String extension = getFileExtension(input);
+            if (extension.equalsIgnoreCase("txt")) {
+                clear(); // 🧹 clear before loading
+                commands.clear();
+                loadTxtFile(input); // Loads text file and displays messages
+            } else if (extension.equalsIgnoreCase("png")) {
+                loadPngFile(input);
+            } else {
+                JOptionPane.showMessageDialog(null, "Unsupported file type");
+            }
+        } else {
+            displayMessage("Cancelled");
+        }
+    }
+
+    public String getFileExtension(File file) {
+        String fileName = file.getName();
+        int lastIndex = fileName.lastIndexOf(".");
+        if (lastIndex > 0 && lastIndex < fileName.length() - 1) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        }
+        return "";
+    }
+
+    public void loadTxtFile(File file) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final String command = line.trim();
+                commands.add(command); // Store the command
+                displayMessage(command); // Show each command using displayMessage
+                processCommand(command); // Execute the command
+            }
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error loading file: " + e.getMessage());
+        }
+    }
+
+    public void loadPngFile(File inputFile) {
+        try {
+            BufferedImage image = ImageIO.read(inputFile);
+            setBufferedImage(image);
+            displayMessage("Image loaded successfully");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error loading image: " + e.getMessage());
+        }
+    }
+
+    public void saveFileTxt() {
+        chooser.setDialogTitle("Save commands as text");
+        chooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+        int result = chooser.showSaveDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File outputFile = chooser.getSelectedFile();
+            if (!outputFile.getName().toLowerCase().endsWith(".txt")) {
+                outputFile = new File(outputFile.getAbsolutePath() + ".txt");
+            }
+
+            try (PrintWriter writer = new PrintWriter(outputFile)) {
+                for (String command : commands) {
+                    writer.println(command);
+                }
+                JOptionPane.showMessageDialog(null, "Commands saved successfully");
+                displayMessage("Commands saved to " + outputFile.getName());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error saving file: " + e.getMessage());
+            }
+        } else {
+            displayMessage("Cancelled");
+        }
+    }
+
+    public void saveFilePng() {
+        chooser.setDialogTitle("Save as PNG");
+        chooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+        int result = chooser.showSaveDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File outputFile = chooser.getSelectedFile();
+            if (!outputFile.getName().toLowerCase().endsWith(".png")) {
+                outputFile = new File(outputFile.getAbsolutePath() + ".png");
+            }
+
+            try {
+                ImageIO.write(getBufferedImage(), "png", outputFile);
+                isImageSaved = true;
+                JOptionPane.showMessageDialog(null, "Image saved successfully");
+                displayMessage("Image saved to " + outputFile.getName());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error saving image: " + e.getMessage());
+            }
+        } else {
+            displayMessage("Cancelled");
+        }
+    }
+
+
+
+
 
     @Override
     public void about() {
@@ -32,21 +216,21 @@ public class TurtleGraphics extends LBUGraphics {
         displayMessage("This program was created by Sashwat Devkota.");
     }
 
-    void drawSquare(int parameter){
+    public void drawSquare(int parameter){
         for (int i = 0; i < 4; i++) {
             forward(parameter);
             right(90);
         }
     }
 
-    void drawTriangle(int parameter){
+    public void drawTriangle(int parameter){
         for (int i = 0; i < 3; i++) {
             forward(parameter);
             right(120);
         }
     }
 
-    void drawTriangle(int a, int b, int c) {
+    public void drawTriangle(int a, int b, int c) {
 
         double angleA = Math.toDegrees(Math.acos((b*b + c*c - a*a) / (2.0 * b * c)));
         double angleB = Math.toDegrees(Math.acos((a*a + c*c - b*b) / (2.0 * a * c)));
@@ -60,11 +244,14 @@ public class TurtleGraphics extends LBUGraphics {
 
     }
 
+
     public void processCommand(String command) {
 
         command = command.toLowerCase();
         String[] commandParts = command.split(" ");
         String cmd = commandParts[0];
+
+        commands.add(command);
 
         switch(cmd){
 
@@ -678,3 +865,4 @@ public class TurtleGraphics extends LBUGraphics {
         }
     }
 }
+
