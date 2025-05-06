@@ -74,8 +74,31 @@ public class TurtleGraphics extends LBUGraphics {
             public void actionPerformed(ActionEvent a) {
                 String helpText =
                         "List of Available Commands: \n\n" +
-                         "move <distance>";
-                         JOptionPane.showMessageDialog(null, helpText, "Command List", JOptionPane.INFORMATION_MESSAGE);
+                        "penup                    " + "pendown\n" +
+                        "left                     " + "left\n" +
+                        "right                    " + "right\n" +
+                        "move                     " + "moven" +
+                        "reverse                  " + "reverse\n" +
+                        "black                    " + "green\n" +
+                        "red                      " + "blue\n" +
+                        "white                    " + "reset\n" +
+                        "clear                    " + "about\n" +
+                        "circle                   " + "clearinterface\n" +
+                        "dance                    " + "displaymessage\n" +
+                        "drawcircle               " + "getbackgroundcolor\n" +
+                        "getdirection             " + "getpencolor\n" +
+                        "getpenstate              " + "getstroke\n" +
+                        "getcoords                " + "point\n" +
+                        "setbackgroundcolor       " + "setturtle\n" +
+                        "setpencolor              " + "setpenstate\n" +
+                        "penwidth                 " + "setturtleimage\n" +
+                        "setturtlespeed           " + "setxcoords\n" +
+                        "setycoords               " + "square\n" +
+                        "star                     " + "spiral\n" +
+                        "triangle                 " + "displaysentence";
+
+
+                JOptionPane.showMessageDialog(null, helpText, "Command List", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
