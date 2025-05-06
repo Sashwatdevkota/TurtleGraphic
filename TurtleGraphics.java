@@ -108,6 +108,8 @@ public class TurtleGraphics extends LBUGraphics {
         defaultPenWidth = Math.round(getStroke());
         forward(0);
 
+        //about();
+
     }
 
     /*---------------------------FILE SAVING SYSTEM------------------------------------------*/
@@ -136,9 +138,10 @@ public class TurtleGraphics extends LBUGraphics {
             File input = chooser.getSelectedFile();
             String extension = getFileExtension(input);
             if (extension.equalsIgnoreCase("txt")) {
-                clear(); // 🧹 clear before loading
+                clear();
                 commands.clear();
-                loadTxtFile(input); // Loads text file and displays messages
+                loadTxtFile(input);
+
             } else if (extension.equalsIgnoreCase("png")) {
                 loadPngFile(input);
             } else {
@@ -163,9 +166,10 @@ public class TurtleGraphics extends LBUGraphics {
             String line;
             while ((line = reader.readLine()) != null) {
                 final String command = line.trim();
-                commands.add(command); // Store the command
-                displayMessage(command); // Show each command using displayMessage
-                processCommand(command); // Execute the command
+                commands.add(command);
+                displayMessage(command);
+                System.out.println(command);
+                processCommand(command);
             }
 
         } catch (IOException e) {
@@ -237,6 +241,8 @@ public class TurtleGraphics extends LBUGraphics {
     @Override
 
     public void about() {
+
+
         super.about();
         displayMessage("This program was created by Sashwat Devkota.");
     }
@@ -283,7 +289,7 @@ public class TurtleGraphics extends LBUGraphics {
         for (int i = 0; i < a; i++) {
             forward(step);
             right(90);
-            step += 5; // controls how much the spiral expands
+            step += 5;
         }
     }
 
